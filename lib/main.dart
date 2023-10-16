@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:playground_app/widgets/graph.dart';
+import 'package:playground_app/widgets/graph/graph.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
@@ -28,7 +28,9 @@ class MyApp extends StatelessWidget {
           title: const Text('Playground'),
         ),
         body: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 32),
               Container(
@@ -52,10 +54,6 @@ class MyApp extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              Container(
-                height: 500,
-                color: Colors.red,
-              ),
             ],
           ),
         ),
