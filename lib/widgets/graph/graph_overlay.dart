@@ -3,7 +3,6 @@ part of 'graph.dart';
 class _GraphOverlay extends StatefulWidget {
   const _GraphOverlay({
     required this.controller,
-    required this.duration,
     required this.child,
     required this.textBuilder,
     required this.hintStyle,
@@ -11,7 +10,6 @@ class _GraphOverlay extends StatefulWidget {
   });
 
   final GraphOverlayController controller;
-  final Duration duration;
   final Widget child;
   final TextStyle? hintStyle;
   final PointOverlayTextBuilder? textBuilder;
@@ -82,7 +80,7 @@ class _GraphOverlayState extends State<_GraphOverlay> {
     _overlayKey.currentState?.insert(newEntry);
 
     late final timer = Timer(
-      widget.duration,
+      model.duration,
       () => _removeOverlay(model),
     );
 
@@ -93,21 +91,26 @@ class _GraphOverlayState extends State<_GraphOverlay> {
     Offset position,
     Offset point,
   ) {
+    final ro = _overlayKey.currentContext?.findRenderObject() as RenderBox;
+    final pos = ro.localToGlobal(Offset.zero);
+
     return OverlayEntry(
-      builder: (context) => Positioned(
-        top: position.dy + 5,
-        left: position.dx,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-          color: Colors.yellow,
-          child: Text(
-            widget.textBuilder?.call(point) ??
-                _GraphOverlayDefaults.defaultOverlayTextBuilder(point),
-            style: widget.hintStyle ??
-                _GraphOverlayDefaults.defaultOverlayHintStyle,
+      builder: (context) {
+        return Positioned(
+          top: position.dy + 5,
+          left: position.dx,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            color: Colors.yellow,
+            child: Text(
+              widget.textBuilder?.call(point) ??
+                  _GraphOverlayDefaults.defaultOverlayTextBuilder(point),
+              style: widget.hintStyle ??
+                  _GraphOverlayDefaults.defaultOverlayHintStyle,
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -136,5 +139,6 @@ class _GraphOverlayDefaults {
     color: Colors.black,
   );
 
-  static String defaultOverlayTextBuilder(Offset point) => 'Point $point';
+  static String defaultOverlayTextBuilder(Offset point) =>
+      '${point.dx.toStringAsFixed(1)}, ${point.dy.toStringAsFixed(1)}';
 }

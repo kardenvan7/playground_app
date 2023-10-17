@@ -43,6 +43,7 @@ class MyApp extends StatelessWidget {
                   ),
                 ),
                 child: const Graph(
+                  bottomLeft: Offset(3, 3),
                   points: [
                     Offset(2, 2),
                     Offset(3, 3),

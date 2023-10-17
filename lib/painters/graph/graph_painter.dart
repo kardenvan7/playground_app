@@ -12,6 +12,8 @@ class GraphPainter extends CustomPainter {
     required this.axesPaint,
     required this.graphPointPaint,
     required this.tappedPointPaint,
+    required this.bottomLeftPoint,
+    required this.topRightPoint,
   }) : assert(graphPoints.length > 2);
 
   final List<Offset> graphPoints;
@@ -22,6 +24,8 @@ class GraphPainter extends CustomPainter {
   final Paint axesPaint;
   final GraphPointStyle tappedPointPaint;
   final GraphPointStyle graphPointPaint;
+  final Offset? bottomLeftPoint;
+  final Offset? topRightPoint;
 
   late CoordinatesConverter _converter;
   late Map<Offset, Offset> _graphPointToCanvasPointMap;
@@ -36,10 +40,38 @@ class GraphPainter extends CustomPainter {
     _drawTappedPoint(canvas);
   }
 
+  ({Offset bottomLeft, Offset topRight}) _calculateCorners() {
+    if (bottomLeftPoint != null && topRightPoint != null) {
+      return (bottomLeft: bottomLeftPoint!, topRight: topRightPoint!);
+    }
+
+    double tempMinX = double.infinity;
+    double tempMinY = double.infinity;
+    double tempMaxX = double.negativeInfinity;
+    double tempMaxY = double.negativeInfinity;
+
+    for (final point in graphPoints) {
+      final pointX = point.dx;
+      final pointY = point.dy;
+
+      tempMinX = tempMinX < pointX ? tempMinX : pointX;
+      tempMinY = tempMinY < pointY ? tempMinY : pointY;
+      tempMaxX = tempMaxX > pointX ? tempMaxX : pointX;
+      tempMaxY = tempMaxY > pointY ? tempMaxY : pointY;
+    }
+
+    return (
+      bottomLeft: bottomLeftPoint ?? Offset(tempMinX, tempMinY),
+      topRight: topRightPoint ?? Offset(tempMaxX, tempMaxY),
+    );
+  }
+
   void _setConverter(Size canvasSize) {
+    final corners = _calculateCorners();
+
     _converter = CoordinatesConverter(
       canvasSize: canvasSize,
-      graphCoordinates: graphPoints,
+      graphCorners: corners,
     );
   }
 
@@ -95,13 +127,19 @@ class GraphPainter extends CustomPainter {
 
     path.moveTo(convertedFirstPoint.dx, convertedFirstPoint.dy);
     canvas.drawCircle(
-        convertedFirstPoint, tappedPointPaint.radius, graphPointPaint.paint);
+      convertedFirstPoint,
+      graphPointPaint.radius,
+      graphPointPaint.paint,
+    );
 
     for (int i = 1; i < graphPoints.length; i++) {
       final convertedPoint = _graphPointToCanvasPointMap[graphPoints[i]]!;
       path.lineTo(convertedPoint.dx, convertedPoint.dy);
       canvas.drawCircle(
-          convertedPoint, tappedPointPaint.radius, graphPointPaint.paint);
+        convertedPoint,
+        graphPointPaint.radius,
+        graphPointPaint.paint,
+      );
     }
 
     canvas.drawPath(path, graphPaint);

@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 class CoordinatesConverter {
   CoordinatesConverter({
     required this.canvasSize,
-    required List<Offset> graphCoordinates,
+    required ({Offset bottomLeft, Offset topRight}) graphCorners,
   }) {
-    _setMinMaxValues(graphCoordinates);
+    _setMinMaxValues(graphCorners);
   }
 
   final Size canvasSize;
@@ -20,26 +20,11 @@ class CoordinatesConverter {
   double get _graphHeight => maxY - minY;
   double get _graphWidth => maxX - minX;
 
-  void _setMinMaxValues(List<Offset> graphCoordinates) {
-    double tempMinX = double.infinity;
-    double tempMinY = double.infinity;
-    double tempMaxX = double.negativeInfinity;
-    double tempMaxY = double.negativeInfinity;
-
-    for (final point in graphCoordinates) {
-      final pointX = point.dx;
-      final pointY = point.dy;
-
-      tempMinX = tempMinX < pointX ? tempMinX : pointX;
-      tempMinY = tempMinY < pointY ? tempMinY : pointY;
-      tempMaxX = tempMaxX > pointX ? tempMaxX : pointX;
-      tempMaxY = tempMaxY > pointY ? tempMaxY : pointY;
-    }
-
-    minX = tempMinX;
-    minY = tempMinY;
-    maxX = tempMaxX;
-    maxY = tempMaxY;
+  void _setMinMaxValues(({Offset bottomLeft, Offset topRight}) graphCorners) {
+    minX = graphCorners.bottomLeft.dx;
+    minY = graphCorners.bottomLeft.dy;
+    maxX = graphCorners.topRight.dx;
+    maxY = graphCorners.topRight.dy;
   }
 
   Offset toCanvasPoint(Offset point) {

@@ -4,11 +4,11 @@ import 'package:playground_app/painters/graph/coordinates_converter.dart';
 
 void main() {
   late Size mockSize;
-  late List<Offset> mockPoints;
+  late ({Offset bottomLeft, Offset topRight}) mockCorners;
 
   CoordinatesConverter getUut() => CoordinatesConverter(
         canvasSize: mockSize,
-        graphCoordinates: mockPoints,
+        graphCorners: mockCorners,
       );
 
   group(
@@ -18,10 +18,10 @@ void main() {
         'Correctly converts to canvas coordinate',
         () {
           mockSize = const Size(300, 200);
-          mockPoints = const <Offset>[
-            Offset(-11, -5),
-            Offset(19, 15),
-          ];
+          mockCorners = const (
+            bottomLeft: Offset(-11, -5),
+            topRight: Offset(19, 15),
+          );
 
           const validPair = (
             graph: Offset(0, 0),
@@ -40,10 +40,10 @@ void main() {
         'Correctly converts to graph coordinate',
         () {
           mockSize = const Size(300, 200);
-          mockPoints = const <Offset>[
-            Offset(-11, -5),
-            Offset(19, 15),
-          ];
+          mockCorners = const (
+            bottomLeft: Offset(-11, -5),
+            topRight: Offset(19, 15),
+          );
 
           final uut = getUut();
 

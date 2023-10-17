@@ -18,10 +18,14 @@ class Graph extends StatefulWidget {
     this.overlayHintStyle,
     this.overlayTextBuilder,
     this.overlayDuration = const Duration(seconds: 2),
+    this.topRight,
+    this.bottomLeft,
     super.key,
   });
 
   final List<Offset> points;
+  final Offset? bottomLeft;
+  final Offset? topRight;
   final bool drawAxes;
   final Paint? graphPaint;
   final Paint? axesPaint;
@@ -39,6 +43,7 @@ class _GraphState extends State<Graph> {
   late final GraphOverlayController _overlayController;
 
   Offset? _pickedPoint;
+  Timer? _pickedPointTimer;
 
   @override
   void initState() {
@@ -47,11 +52,26 @@ class _GraphState extends State<Graph> {
   }
 
   void _onTap(Offset position, Offset graphPoint) {
+    _pickedPointTimer?.cancel();
     _overlayController.removeLastEntry();
-    _overlayController.showCoordinateOverlay(position, graphPoint);
+    _overlayController.showCoordinateOverlay(
+      position: position,
+      graphPoint: graphPoint,
+      duration: widget.overlayDuration,
+    );
 
     setState(() {
       _pickedPoint = position;
+      _pickedPointTimer = Timer.periodic(
+        widget.overlayDuration,
+        (timer) {
+          setState(() {
+            _pickedPoint = null;
+            _pickedPointTimer?.cancel();
+            _pickedPointTimer = null;
+          });
+        },
+      );
     });
   }
 
@@ -65,21 +85,24 @@ class _GraphState extends State<Graph> {
   Widget build(BuildContext context) {
     return _GraphOverlay(
       controller: _overlayController,
-      duration: widget.overlayDuration,
       textBuilder: widget.overlayTextBuilder,
       hintStyle: widget.overlayHintStyle,
-      child: CustomPaint(
-        painter: GraphPainter(
-          onTap: _onTap,
-          graphPoints: widget.points,
-          drawAxes: widget.drawAxes,
-          tappedPoint: _pickedPoint,
-          graphPaint: widget.graphPaint ?? _GraphDefaults.defaultGraphPaint,
-          axesPaint: widget.axesPaint ?? _GraphDefaults.defaultAxesPaint,
-          graphPointPaint:
-              widget.graphPointStyle ?? _GraphDefaults.defaultGraphPointStyle,
-          tappedPointPaint:
-              widget.tappedPointStyle ?? _GraphDefaults.defaultTappedPointStyle,
+      child: ClipRect(
+        child: CustomPaint(
+          painter: GraphPainter(
+            onTap: _onTap,
+            bottomLeftPoint: widget.bottomLeft,
+            topRightPoint: widget.topRight,
+            graphPoints: widget.points,
+            drawAxes: widget.drawAxes,
+            tappedPoint: _pickedPoint,
+            graphPaint: widget.graphPaint ?? _GraphDefaults.defaultGraphPaint,
+            axesPaint: widget.axesPaint ?? _GraphDefaults.defaultAxesPaint,
+            graphPointPaint:
+                widget.graphPointStyle ?? _GraphDefaults.defaultGraphPointStyle,
+            tappedPointPaint: widget.tappedPointStyle ??
+                _GraphDefaults.defaultTappedPointStyle,
+          ),
         ),
       ),
     );

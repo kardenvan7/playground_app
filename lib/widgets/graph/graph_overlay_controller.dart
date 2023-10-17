@@ -3,7 +3,11 @@ part of 'graph.dart';
 abstract interface class GraphOverlayController {
   void removeLastEntry();
 
-  void showCoordinateOverlay(Offset position, Offset graphPoint);
+  void showCoordinateOverlay({
+    required Offset position,
+    required Offset graphPoint,
+    Duration duration = const Duration(seconds: 2),
+  });
 
   Stream<GraphOverlayCommand> get overlayEntriesStream;
 
@@ -21,8 +25,12 @@ final class DefaultGraphOverlayController implements GraphOverlayController {
       _streamController.stream;
 
   @override
-  void showCoordinateOverlay(Offset position, Offset graphPoint) {
-    final entry = _createCoordinateEntryModel(position, graphPoint);
+  void showCoordinateOverlay({
+    required Offset position,
+    required Offset graphPoint,
+    Duration duration = const Duration(seconds: 2),
+  }) {
+    final entry = _createCoordinateEntryModel(position, graphPoint, duration);
 
     _streamController.add(entry);
   }
@@ -30,9 +38,14 @@ final class DefaultGraphOverlayController implements GraphOverlayController {
   GraphOverlayCommand _createCoordinateEntryModel(
     Offset position,
     Offset point,
+    Duration duration,
   ) {
     return NewEntryGraphOverlayCommand(
-      PointGraphOverlayEntryModel(position: position, point: point),
+      PointGraphOverlayEntryModel(
+        position: position,
+        point: point,
+        duration: duration,
+      ),
     );
   }
 
