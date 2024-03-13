@@ -4,13 +4,20 @@ Playground application
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+*Widget* - configuration of an element
+    Properties:
+        - Immutable
+        - Can be used none or more times thanks to it's immutability
+    What it does:
+        - Describes a part of a UI
+        - Defines which element it is associated with
+        - Defines which render object (if any) it is associated with
 
-A few resources to get you started if this is your first Flutter project:
+*Element* - instantiation of a widget in a particular location of an element tree
+    Properties:
+        - Mutable
+        - Has links to both widget and render object
+    What it does:
+        - Updates render object whenever widget configuration changes
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+*Render object* - object responsible for layout, composition and painting.

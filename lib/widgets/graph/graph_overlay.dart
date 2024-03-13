@@ -6,7 +6,6 @@ class _GraphOverlay extends StatefulWidget {
     required this.child,
     required this.textBuilder,
     required this.hintStyle,
-    super.key,
   });
 
   final GraphOverlayController controller;
@@ -91,9 +90,6 @@ class _GraphOverlayState extends State<_GraphOverlay> {
     Offset position,
     Offset point,
   ) {
-    final ro = _overlayKey.currentContext?.findRenderObject() as RenderBox;
-    final pos = ro.localToGlobal(Offset.zero);
-
     return OverlayEntry(
       builder: (context) {
         return Positioned(

@@ -3,7 +3,9 @@ import 'package:flutter/rendering.dart';
 import 'dart:math' as math;
 
 class CustomFillSliverRoScreen extends StatelessWidget {
-  const CustomFillSliverRoScreen({super.key});
+  const CustomFillSliverRoScreen({this.child, super.key});
+
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +64,9 @@ class CustomFillSliverRoScreen extends StatelessWidget {
               constraints: const BoxConstraints.expand(height: 2),
             ),
           ),
-          const DecoratedSliver(
-            decoration: BoxDecoration(color: Colors.orange),
-            sliver: _CustomSliverFillRemainingAndOverscroll(),
+          DecoratedSliver(
+            decoration: const BoxDecoration(color: Colors.orange),
+            sliver: _CustomSliverFillRemainingAndOverscroll(child: child),
           ),
         ],
       ),
@@ -80,13 +82,14 @@ class _CustomSliverFillRemainingAndOverscroll
 
   @override
   _CustomRenderSliverFillRemainingAndOverscroll createRenderObject(
-          BuildContext context) =>
+    BuildContext context,
+  ) =>
       _CustomRenderSliverFillRemainingAndOverscroll();
 }
 
 class _CustomRenderSliverFillRemainingAndOverscroll
     extends RenderSliverSingleBoxAdapter {
-  _CustomRenderSliverFillRemainingAndOverscroll({super.child});
+  _CustomRenderSliverFillRemainingAndOverscroll();
 
   @override
   void performLayout() {
